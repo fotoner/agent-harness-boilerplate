@@ -20,9 +20,11 @@ rm -rf .git && git init
 
 ```
 CLAUDE.md                          # 에이전트 진입점
-.claude/skills/
-├── manage-cycle/SKILL.md          # 스프린트/이슈 관리 (/manage-cycle)
-└── init-project/SKILL.md          # 하네스 초기화 (/init-project)
+.claude/
+├── settings.json                  # 점진적 하네스 훅 (progressive harness)
+└── skills/
+    ├── manage-cycle/SKILL.md      # 스프린트/이슈 관리 (/manage-cycle)
+    └── init-project/SKILL.md      # 하네스 초기화 (/init-project)
 docs/
 ├── ARCHITECTURE.md                # 아키텍처 (리서치 후 결정)
 ├── REQUIREMENTS.md                # EARS 요구사항
@@ -31,11 +33,12 @@ docs/
 ├── CODE_REVIEW.md                 # 코드 리뷰 규칙
 ├── RELIABILITY.md                 # 에러 처리 정책
 ├── SECURITY.md                    # 보안 정책
+├── DECISIONS.md                   # ADR (Architecture Decision Records)
 ├── cycle/                         # 스프린트/이슈 관리
 │   ├── backlog.md
 │   ├── current-sprint.md
 │   └── sprints/
-└── superpowers/
+└── designs/
     ├── specs/                     # 디자인 문서
     └── plans/                     # 구현 계획서
 ```
@@ -51,6 +54,7 @@ docs/
 | REQUIREMENTS.md | 반반 | EARS 참조(불변) + 도메인 분해(가변) |
 | RELIABILITY.md | 반반 | 공통 정책(불변) + 프로젝트 특화(가변) |
 | SECURITY.md | 반반 | 공통 원칙(불변) + 환경 변수(가변) |
+| DECISIONS.md | 가변 | ADR — 기술적 결정과 근거 기록 |
 
 ## 스킬
 
