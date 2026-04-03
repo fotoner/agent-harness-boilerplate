@@ -54,7 +54,7 @@
 - `tests/...`
 
 ## 참고
-- 관련 스펙: `docs/superpowers/specs/...`
+- 관련 스펙: `docs/designs/specs/...`
 - 의존 작업:
 - 비고:
 ```
@@ -106,7 +106,7 @@
 - `tests/...`
 
 ## 참고
-- 관련 스펙: `docs/superpowers/specs/...`
+- 관련 스펙: `docs/designs/specs/...`
 - 의존 작업:
 ```
 
@@ -210,22 +210,28 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - squash merge 전 자기 검토용 PR 생성 **권장**
 - PR 없이 로컬 squash merge도 허용 (1인 프로젝트)
 
-## `finishing-a-development-branch` 스킬 오버라이드
+## `/ship` 스킬 사용 가이드
 
-이 프로젝트에서 `superpowers:finishing-a-development-branch` 스킬 사용 시 다음 규칙을 적용한다:
+feature 브랜치 작업 완료 후 `/ship` 스킬을 사용하여 main에 통합한다.
 
-**Option 1 (로컬 merge)**: 일반 merge 대신 **squash merge**로 수행. **코드 리뷰 필수**:
+**전제조건**: `/review`로 코드 리뷰 통과 필수. Critical/Important 이슈 모두 수정.
+
+**`/ship`이 자동 수행하는 것**:
+1. base branch merge + 테스트 실행
+2. diff 리뷰 + VERSION bump + CHANGELOG 업데이트
+3. commit + push + PR 생성
+
+> 상세 워크플로우 (adversarial review, scope drift detection 등): gstack `/ship` SKILL.md 참조
+
+**PR 생성 후**: GitHub에서 **Squash and merge** 선택.
+
+**로컬 merge 옵션** (1인 프로젝트, `/ship` 대신):
 ```bash
-# 1. 코드 리뷰 (superpowers:requesting-code-review)
-# 2. Critical/Important 이슈 수정
-# 3. squash merge
 git checkout main
 git pull
 git merge --squash <feature-branch>
 git commit  # squash commit 메시지 작성
 git branch -d <feature-branch>
 ```
-
-**Option 2 (PR 생성)**: GitHub에서 **Squash and merge** 사용.
 
 **커밋 메시지**: squash commit 메시지는 위 "Squash Merge 규칙" 형식을 따른다.

@@ -8,13 +8,13 @@
 
 | 시점 | 방법 |
 |------|------|
-| feature 브랜치 완료 후, squash merge 전 | `superpowers:requesting-code-review` 스킬 호출 |
+| feature 브랜치 완료 후, squash merge 전 | `/review` 스킬 호출 |
 
 ## 리뷰 프로세스
 
 ```
 1. feature 브랜치에서 구현 + 테스트 완료
-2. superpowers:requesting-code-review 스킬로 코드 리뷰 요청
+2. /review 스킬로 코드 리뷰 요청
 3. 리뷰 결과에서 Critical/Important 이슈 수정
 4. 수정 후 재검증 (테스트 통과 확인)
 5. squash merge to main
