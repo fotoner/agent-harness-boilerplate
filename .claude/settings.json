@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "command": "# Progressive Harness Hook\n# 에이전트가 같은 실수를 2회 반복하면 여기에 검사 규칙을 추가한다.\n# 예시: 파일 길이 체크, 금지 패턴 검사, 타입 안전성 위반 탐지\n#\n# 규칙 승격 절차:\n#   1. 문서 규칙 (QUALITY_RULES.md에 추가)\n#   2. 문서로도 위반 반복 → 이 훅에 검사 추가\n#   3. 훅으로도 부족 → CI 린터로 승격\n#\n# 아래에 규칙을 추가하세요:\nexit 0"
+      }
+    ]
+  }
+}

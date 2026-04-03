@@ -26,7 +26,7 @@
 ### 브랜치 전략
 - `main`에 직접 커밋 금지. 모든 작업은 feature 브랜치에서 수행
 - 관련 이슈를 논리적 단위로 묶어 1개 브랜치로 작업
-- **squash merge 전 코드 리뷰 필수** (`superpowers:requesting-code-review`)
+- **squash merge 전 코드 리뷰 필수** (`/review`)
 - 완료 후 squash and merge로 main에 통합
 - 상세: `docs/CONVENTIONS.md`
 
@@ -38,7 +38,8 @@
 
 ### 점진적 하네스
 - 에이전트가 같은 실수 2회 반복 → 이 파일 또는 QUALITY_RULES.md에 규칙 추가
-- 문서 규칙으로도 위반 반복 → 린터/테스트로 승격하여 기계적 강제
+- 문서 규칙으로도 위반 반복 → `.claude/settings.json` 훅으로 승격하여 기계적 강제
+- 훅으로도 부족 → CI 린터로 최종 승격
 
 ## 프로젝트 관리
 
@@ -58,7 +59,27 @@
 | `docs/CODE_REVIEW.md` | 코드 리뷰 필수 규칙, 리뷰 관점 |
 | `docs/RELIABILITY.md` | 에러 처리 정책, 데이터 무결성 |
 | `docs/SECURITY.md` | 환경 변수 관리, 데이터 보호 |
+| `docs/DECISIONS.md` | ADR (Architecture Decision Records) |
 
 ## 디렉토리 구조
 
 {{DIRECTORY_STRUCTURE}}
+
+## Skill routing
+
+사용자 요청이 가용 스킬과 매칭되면, 항상 Skill 도구로 먼저 호출한다.
+직접 답변하지 말고, 다른 도구를 먼저 쓰지 않는다.
+
+주요 라우팅 규칙:
+- 제품 아이디어, "이거 만들 가치 있어?", 브레인스토밍 → office-hours
+- 버그, 에러, "왜 안 돼", 500 에러 → investigate
+- 배포, PR 생성, push → ship
+- QA, 사이트 테스트, 버그 찾기 → qa
+- 코드 리뷰, diff 확인 → review
+- 배포 후 문서 업데이트 → document-release
+- 주간 회고 → retro
+- 디자인 시스템, 브랜드 → design-consultation
+- 시각적 검수, 디자인 폴리시 → design-review
+- 아키텍처 리뷰 → plan-eng-review
+- 진행 상황 저장, 체크포인트 → checkpoint
+- 코드 품질, 헬스 체크 → health

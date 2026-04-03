@@ -105,30 +105,27 @@ plan-sprint → (실행: 자동 규칙 적용) → retrospective → next-sprint
 
 **처리 방식**: `Edit` 도구로 `CLAUDE.md` 직접 편집.
 
-### 규칙 4: 구현 플랜 양방향 동기화 (superpowers 연동)
+### 규칙 4: gstack 스킬 트리거 연동
 
-구현 플랜(`docs/superpowers/plans/*.md`)과 이슈는 양방향으로 동기화한다.
+gstack 스킬과 cycle 이슈를 연동한다. gstack이 생성한 아티팩트(디자인 문서, plan file)는 해당 스킬이 자체 관리하므로, cycle → gstack 방향의 단방향 트리거로 운영한다.
 
-**플랜 → Cycle (이슈 생성 시)**:
-- `create-issue`로 새 이슈 생성 시, 플랜에 대응하는 Task가 있는지 확인
-- 플랜 Task에서 파생된 이슈면 backlog.md의 이슈 행에 plan Task 번호 기록
-- 플랜에 없는 새 이슈면, 플랜의 Progress Tracking 테이블에 새 행 추가
+**디자인 문서 위치**:
+- 로컬: `docs/designs/specs/`, `docs/designs/plans/`
+- gstack: `~/.gstack/projects/{slug}/` (gstack `/office-hours`가 자동 생성)
 
-**Cycle → 플랜 (회고/전환 시)**:
-- `retrospective` 실행 시, 완료된 Task의 상태를 플랜의 Progress Tracking에 반영
-- `next-sprint` 실행 시, 새 스프린트에 할당된 Task의 스프린트 컬럼 업데이트
+**gstack 스킬 트리거**:
 
-**superpowers 스킬 연동**:
+| 상황 | gstack 스킬 | 트리거 시점 |
+|------|-------------|------------|
+| 새 기능/설계가 필요한 이슈 생성 | `/office-hours` | `create-issue`에서 복잡도 판단 시 |
+| 회고 Try 항목 → 새 작업 도출 | `/office-hours` | `next-sprint` Step 5에서 |
+| 복수 Task가 필요한 큰 작업 | `/plan-eng-review` | `/office-hours` 디자인 승인 후 |
+| 코드 리뷰 | `/review` | 브랜치 완료 전 |
+| 브랜치 완료/merge | `/ship` | 코드 리뷰 통과 후 |
 
-| 상황 | 스킬 | 트리거 |
-|------|------|--------|
-| 새 기능/설계가 필요한 이슈 생성 | `superpowers:brainstorming` | `create-issue`에서 복잡도 판단 시 |
-| 회고 Try 항목 → 새 작업 도출 | `superpowers:brainstorming` | `next-sprint` Step 5에서 |
-| 복수 Task가 필요한 큰 작업 | `superpowers:writing-plans` | brainstorming 결과가 여러 Task를 요구할 때 |
+> **흐름**: `/office-hours`(무엇을, 왜) → `/plan-eng-review`(어떻게, 어떤 순서로) → `create-issue`(이슈 등록)
 
-> **흐름**: `brainstorming`(무엇을, 왜) → `writing-plans`(어떻게, 어떤 순서로) → `create-issue`(이슈 등록) → 플랜 Progress Tracking 업데이트
-
-**처리 방식**: `Read` + `Edit` 도구로 플랜 파일과 `backlog.md` / `current-sprint.md` 편집.
+**처리 방식**: `Read` + `Edit` 도구로 `backlog.md` / `current-sprint.md` 편집.
 
 ### 규칙 5: 브랜치 기반 작업 관리
 
@@ -144,9 +141,9 @@ plan-sprint → (실행: 자동 규칙 적용) → retrospective → next-sprint
 **브랜치 네이밍**: `<type>/<short-description>`
 
 **완료 시점**: 브랜치 내 모든 이슈가 완료되면:
-1. `superpowers:requesting-code-review` 스킬로 코드 리뷰 수행
+1. `/review` 스킬로 코드 리뷰 수행
 2. Critical/Important 이슈 수정
-3. `superpowers:finishing-a-development-branch` 스킬로 squash merge 수행
+3. `/ship` 스킬로 PR 생성 및 squash merge 수행
 
 **squash commit 메시지 형식**:
 ```
@@ -174,7 +171,7 @@ EARS 형식으로 `backlog.md`에 이슈를 추가한다.
 1. 제목이 EARS 형식(`[D{n}.{n}][패턴] 설명`)인지 확인
 2. **복잡도 판단**: 이슈가 단순 작업/버그인지, 새로운 기능/설계가 필요한 작업인지 판단
    - **단순 작업/버그**: 바로 Step 3으로 진행
-   - **새 기능/설계 필요**: `superpowers:brainstorming` 스킬을 먼저 호출
+   - **새 기능/설계 필요**: `/office-hours` 스킬을 먼저 호출
 3. 이슈 ID 자동 할당 (이슈 ID 규칙 참조)
 4. `backlog.md`의 Issues 테이블에 행 추가:
    ```
@@ -251,7 +248,7 @@ EARS 형식으로 `backlog.md`에 이슈를 추가한다.
 **처리 절차**:
 
 #### Step 1: 스프린트 목적 및 목표 설정
-1. 구현 플랜(`docs/superpowers/plans/`)의 Progress Tracking을 읽고, 이번 스프린트 범위 파악
+1. 구현 플랜(`docs/designs/plans/`)과 gstack 디자인 문서(`~/.gstack/projects/`)를 읽고, 이번 스프린트 범위 파악
 2. 이전 스프린트 아카이브(`sprints/`)에서 최근 회고의 Try 항목 확인
 3. 사용자와 함께 다음을 결정:
    - **스프린트 목적** (1문장)
@@ -278,6 +275,20 @@ EARS 형식으로 `backlog.md`에 이슈를 추가한다.
 
 **처리 절차**:
 
+#### Phase 0.5: 코드 헬스 체크 (gstack /health 연동)
+
+gstack `/health` 스킬을 호출하여 최신 코드 품질 점수를 수집한다.
+
+**$SLUG 계산**: `eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)"` 사용. gstack-slug 미설치 시 `basename $(git rev-parse --show-toplevel)` 폴백.
+
+**처리 절차**:
+1. `/health` 스킬을 호출하여 최신 코드 품질 데이터 생성
+2. `~/.gstack/projects/$SLUG/health-history.jsonl`에서 최신 엔트리를 읽어서 composite score + 카테고리별 점수 추출
+3. 점수 < 7인 카테고리를 Phase 3의 Problem 섹션에 자동 표면화
+4. 점수 < 7인 카테고리에 대해 `docs/QUALITY_RULES.md`에 구체적 규칙 추가를 **제안** (사용자 확인 후 추가, progressive harness 원칙 유지)
+
+**파싱 실패 폴백**: JSONL 파일이 없거나 파싱 결과가 0건이면 "⚠ /health 점수를 수집하지 못했습니다. gstack /health를 먼저 실행하거나 출력 형식을 확인하세요." 경고를 표시하고 이 단계를 건너뜀.
+
 #### Phase 1: 스프린트 결과 수집
 1. `current-sprint.md`를 `Read`로 읽어서 목적, 성공 기준, Board 파싱
 2. 완료/미완료 작업 분류
@@ -302,6 +313,7 @@ EARS 형식으로 `backlog.md`에 이슈를 추가한다.
 ### 목표 달성 평가
 **목적**: {스프린트 목적}
 **달성도**: N/M 성공 기준 달성
+**코드 헬스**: {composite score}/10 (typecheck: {N}, lint: {N}, test: {N}, deadcode: {N}, shell: {N})
 
 | 성공 기준 | 결과 | 비고 |
 |----------|------|------|
@@ -349,7 +361,7 @@ EARS 형식으로 `backlog.md`에 이슈를 추가한다.
 #### Step 5: 회고 Try → 새 작업 도출
 1. 회고 Try 항목 중 구체적 작업으로 전환할 수 있는 것이 있으면:
    - 단순 이슈: `create-issue` 호출
-   - 새 기능/설계: `superpowers:brainstorming` → `superpowers:writing-plans` → `create-issue`
+   - 새 기능/설계: `/office-hours` → `/plan-eng-review` → `create-issue`
 
 #### Step 6: 다음 스프린트 계획
 1. `plan-sprint` 명령을 내부 호출

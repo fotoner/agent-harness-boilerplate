@@ -40,13 +40,30 @@ description: >-
 
 ## 처리 절차
 
+### Step 0: 스택 자동 감지 (신규)
+
+프로젝트 루트에서 매니페스트 파일을 탐색하여 기술 스택을 자동 감지한다.
+
+**탐색 대상**: package.json, go.mod, pyproject.toml, Cargo.toml, build.gradle, pom.xml, Gemfile
+
+**처리 방식**:
+1. `Glob` 도구로 프로젝트 루트에서 위 파일들을 탐색
+2. 발견된 파일을 `Read` 도구로 읽어서 언어, 프레임워크, 주요 의존성 추출
+3. 추출 결과를 Step 1의 기본값으로 사용
+
+**모노레포 처리**:
+- 루트에 매니페스트가 없으면 1단계 하위 디렉토리(`*/package.json` 등) 스캔
+- 복수 매니페스트 발견 시 사용자에게 "메인 프로젝트를 선택하세요" 프롬프트 표시
+
+**감지 실패**: 매니페스트 파일이 없으면 Step 1의 대화형 모드로 폴백 (전부 질문)
+
 ### Step 1: 프로젝트 정보 수집
 
 **대화형 모드** (인자 없이 호출):
-사용자에게 다음을 순서대로 질문한다 (한 번에 하나씩):
+Step 0에서 감지된 값을 기본값으로 표시하고, 사용자에게 확인/수정을 요청한다:
 1. 프로젝트 이름
 2. 프로젝트 설명 (한 줄)
-3. 기술 스택 (언어, 프레임워크, 주요 라이브러리)
+3. 기술 스택 (언어, 프레임워크, 주요 라이브러리) — Step 0 감지 결과가 있으면 기본값으로 제안
 4. 주요 외부 연동 (DB, API, 서비스 등)
 
 **플랜 문서 모드** (파일 경로 제공):
@@ -122,6 +139,23 @@ C) Clean Architecture
 - `Edit` 도구로 각 placeholder를 치환 (replace_all=true 사용)
 - 치환 후 각 파일이 자연스럽게 읽히는지 확인
 - placeholder 주변의 HTML 주석 (<!-- 힌트 -->)도 함께 제거
+
+### Step 4.5: gstack routing 생성 (신규)
+
+gstack 설치 여부를 확인하고, 설치되어 있으면 CLAUDE.md에 skill routing rules를 추가한다.
+
+**처리 방식**:
+1. `ls ~/.claude/skills/gstack/VERSION 2>/dev/null` 으로 gstack 존재 확인
+2. **설치됨**: CLAUDE.md의 `## Skill routing` 섹션이 이미 존재하는지 확인. 없으면 파일 하단에 추가
+3. **미설치**: CLAUDE.md 하단에 주석 삽입: `<!-- gstack 설치 후 /init-project를 다시 실행하면 skill routing이 추가됩니다 -->`
+
+### Step 4.6: Migration audit (신규)
+
+모든 하네스 문서에서 이전 스킬 팩 참조가 남아있지 않은지 확인한다.
+
+`Grep` 도구로 CLAUDE.md, docs/, .claude/skills/, README.md 범위에서 이전 스킬 팩 이름을 검색한다.
+
+Expected: 0 matches. 잔존 참조가 있으면 사용자에게 목록을 표시하고 수정을 안내한다.
 
 ### Step 5: 초기 커밋
 
