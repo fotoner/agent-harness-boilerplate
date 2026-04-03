@@ -159,8 +159,10 @@ Expected: 0 matches. 잔존 참조가 있으면 사용자에게 목록을 표시
 
 ### Step 5: 초기 커밋
 
+치환된 파일만 명시적으로 staging한다 (`git add -A` 사용 금지):
+
 ```bash
-git add -A
+git add CLAUDE.md docs/ARCHITECTURE.md docs/REQUIREMENTS.md docs/CONVENTIONS.md docs/RELIABILITY.md docs/SECURITY.md docs/CODE_REVIEW.md
 git commit -m "chore: init project harness for {PROJECT_NAME}"
 ```
 
