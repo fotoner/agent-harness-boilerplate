@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/hooks/worklog_capture.py --harness codex",
+            "timeout": 30,
+            "statusMessage": "work-log raw capture"
+          }
+        ]
+      }
+    ]
+  }
+}
