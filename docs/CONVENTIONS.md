@@ -212,6 +212,8 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 ## `/ship` 스킬 사용 가이드
 
+> 이 레포의 **커밋·PR 생성 정본은 `commit` / `pr` 스킬**(초안 승인 게이트 — CLAUDE.md "커밋·PR 게이트")이다. `/ship`은 gstack 설치 시 버전 bump·CHANGELOG·머지까지 묶는 **전체 릴리스 통합** 대안 워크플로다. 커밋/PR 단계는 게이트 스킬을 거친다.
+
 feature 브랜치 작업 완료 후 `/ship` 스킬을 사용하여 main에 통합한다.
 
 **전제조건**: `/review`로 코드 리뷰 통과 필수. Critical/Important 이슈 모두 수정.
