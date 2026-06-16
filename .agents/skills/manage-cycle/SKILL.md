@@ -121,7 +121,7 @@ gstack 스킬과 cycle 이슈를 연동한다. gstack이 생성한 아티팩트(
 | 회고 Try 항목 → 새 작업 도출 | `/office-hours` | `next-sprint` Step 5에서 |
 | 복수 Task가 필요한 큰 작업 | `/plan-eng-review` | `/office-hours` 디자인 승인 후 |
 | 코드 리뷰 | `/review` | 브랜치 완료 전 |
-| 브랜치 완료/merge | `/ship` | 코드 리뷰 통과 후 |
+| 브랜치 완료/PR 생성 | `pr` (게이트) · 전체 릴리스는 `/ship` | 코드 리뷰 통과 후 |
 
 > **흐름**: `/office-hours`(무엇을, 왜) → `/plan-eng-review`(어떻게, 어떤 순서로) → `create-issue`(이슈 등록)
 
@@ -143,7 +143,7 @@ gstack 스킬과 cycle 이슈를 연동한다. gstack이 생성한 아티팩트(
 **완료 시점**: 브랜치 내 모든 이슈가 완료되면:
 1. `/review` 스킬로 코드 리뷰 수행
 2. Critical/Important 이슈 수정
-3. `/ship` 스킬로 PR 생성 및 squash merge 수행
+3. `pr` 스킬로 PR 생성 (초안 승인 게이트 — CLAUDE.md "커밋·PR 게이트"). 전체 릴리스 통합(버전 bump·CHANGELOG·머지)이 필요하면 gstack `/ship`.
 
 **squash commit 메시지 형식**:
 ```
