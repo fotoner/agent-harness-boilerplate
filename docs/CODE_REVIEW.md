@@ -2,13 +2,13 @@
 
 ## 필수 규칙
 
-**squash merge 이전에 반드시 코드 리뷰를 수행한다.** 코드 리뷰 없이 main에 merge하지 않는다.
+**merge 이전에 반드시 코드 리뷰를 수행한다.** 코드 리뷰 없이 main에 merge하지 않는다.
 
 ## 리뷰 시점
 
 | 시점 | 방법 |
 |------|------|
-| feature 브랜치 완료 후, squash merge 전 | `/review` 스킬 호출 |
+| feature 브랜치 완료 후, merge 전 | `/review` 스킬 호출 |
 
 ## 리뷰 프로세스
 
@@ -17,7 +17,7 @@
 2. /review 스킬로 코드 리뷰 요청
 3. 리뷰 결과에서 Critical/Important 이슈 수정
 4. 수정 후 재검증 (테스트 통과 확인)
-5. squash merge to main
+5. merge to main
 ```
 
 ## 리뷰 관점
@@ -50,4 +50,4 @@
 
 ## 병렬 워크트리 작업 시
 
-병렬 에이전트가 각각 워크트리에서 작업한 경우, **각 워크트리 브랜치별로 개별 리뷰**한 후 main에 squash merge한다.
+병렬 에이전트가 각각 워크트리에서 작업한 경우, **각 워크트리 브랜치별로 개별 리뷰**한 후 main에 merge한다.

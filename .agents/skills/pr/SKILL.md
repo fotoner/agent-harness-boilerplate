@@ -43,7 +43,7 @@ PR 생성을 **브랜치명·PR 메시지 검수 게이트**를 거쳐 수행한
 
 6. **생성 + 보고**
    - `gh pr create` (base 명시) 실행 후 PR URL 을 1줄로 보고한다.
-   - merge 는 이 스킬 범위 밖 — squash merge 전 코드 리뷰 필수 규칙(CLAUDE.md 브랜치 전략)을 상기시킨다.
+   - merge 는 이 스킬 범위 밖 — merge 전 코드 리뷰 필수 규칙(CLAUDE.md 브랜치 전략)을 상기시킨다.
 
 ## 자주 하는 실수
 

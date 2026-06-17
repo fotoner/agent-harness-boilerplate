@@ -128,12 +128,12 @@
 ## 커밋 메시지
 
 ### Feature 브랜치 내 커밋
-브랜치 내 커밋은 squash로 사라지므로 형식에 얽매이지 않아도 됨. 다만 기본 형식 권장:
+브랜치 내 커밋은 자유롭게 작성(WIP·중간 커밋 OK). 다만 기본 형식 권장:
 ```
 <type>: <description>
 ```
 
-### Squash commit (main에 통합될 때)
+### 통합 커밋 (main 머지 시)
 ```
 <type>: <한 줄 요약>
 
@@ -154,12 +154,12 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 - 한국어 또는 영어 모두 허용
 - 첫 글자 소문자 (영어), 마침표 없음
-- squash commit 제목은 50자 이내, 본문에 포함된 이슈 번호 나열
+- 통합 커밋 제목은 50자 이내, 본문에 포함된 이슈 번호 나열
 
 ## 브랜치 전략
 
 ### 원칙
-- `main`: 안정 브랜치. **직접 커밋 금지**. 항상 squash merge로만 통합.
+- `main`: 안정 브랜치. **직접 커밋 금지**. feature 브랜치를 통해서만 통합 (merge 전략은 프로젝트가 선택).
 - 모든 작업은 feature 브랜치에서 수행한다.
 
 ### 브랜치 단위 (묶음 기준)
@@ -170,7 +170,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 | 의존성이 있는 관련 이슈 N개 | 논리적 묶음 = 브랜치 1개 | `feat/search-tools` |
 | 문서/설정만 변경 | 변경 묶음 = 브랜치 1개 | `docs/conventions` |
 
-**판단 기준**: "이 브랜치의 squash commit 메시지를 한 문장으로 쓸 수 있는가?" — 쓸 수 있으면 적절한 묶음.
+**판단 기준**: "이 브랜치의 통합 커밋 메시지를 한 문장으로 쓸 수 있는가?" — 쓸 수 있으면 적절한 묶음.
 
 ### 브랜치 네이밍
 
@@ -191,24 +191,24 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 1. main에서 feature 브랜치 생성
 2. 브랜치에서 자유롭게 커밋 (WIP, 중간 커밋 OK)
-3. 작업 완료 후 squash and merge → main
+3. 작업 완료 후 main에 머지
 4. feature 브랜치 삭제
 ```
 
-### Squash Merge 규칙
+### Merge 규칙
 
-- **squash commit 메시지**: `<type>: <한 줄 요약>` + 본문에 이슈 번호 나열
-- 브랜치 내 개별 커밋 히스토리는 squash로 사라지므로, 브랜치 내에서는 커밋 메시지 품질에 집착하지 않아도 됨
-- main의 히스토리는 squash commit 단위로 깔끔하게 유지
+- **통합 커밋 메시지**: `<type>: <한 줄 요약>` + 본문에 이슈 번호 나열
+- merge 전략(merge commit / squash / rebase)은 프로젝트가 선택한다 — 보일러플레이트는 강제하지 않는다
+- main 히스토리는 논리적 통합 단위로 깔끔하게 유지
 
 ## 코드 리뷰
 
-**squash merge 전 코드 리뷰 필수.** 상세: `docs/CODE_REVIEW.md`
+**merge 전 코드 리뷰 필수.** 상세: `docs/CODE_REVIEW.md`
 
 ## PR 규칙
 
-- squash merge 전 자기 검토용 PR 생성 **권장**
-- PR 없이 로컬 squash merge도 허용 (1인 프로젝트)
+- merge 전 자기 검토용 PR 생성 **권장**
+- PR 없이 로컬 머지도 허용 (1인 프로젝트)
 
 ## `/ship` 스킬 사용 가이드
 
@@ -225,15 +225,14 @@ feature 브랜치 작업 완료 후 `/ship` 스킬을 사용하여 main에 통�
 
 > 상세 워크플로우 (adversarial review, scope drift detection 등): gstack `/ship` SKILL.md 참조
 
-**PR 생성 후**: GitHub에서 **Squash and merge** 선택.
+**PR 생성 후**: GitHub에서 머지 (전략은 프로젝트 선택).
 
 **로컬 merge 옵션** (1인 프로젝트, `/ship` 대신):
 ```bash
 git checkout main
 git pull
-git merge --squash <feature-branch>
-git commit  # squash commit 메시지 작성
+git merge --no-ff <feature-branch>   # merge 전략은 프로젝트 선택 (--squash 등)
 git branch -d <feature-branch>
 ```
 
-**커밋 메시지**: squash commit 메시지는 위 "Squash Merge 규칙" 형식을 따른다.
+**커밋 메시지**: 통합 커밋 메시지는 위 "Merge 규칙" 형식을 따른다.

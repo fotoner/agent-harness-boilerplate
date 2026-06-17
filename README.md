@@ -76,5 +76,5 @@ docs/
 
 - **TDD 필수**: 실패하는 테스트 → 최소 구현 → 리팩토링
 - **점진적 하네스**: 실수 2회 반복 → 규칙 추가. 문서로 안 되면 린터로 승격
-- **squash merge**: main은 깔끔한 커밋 히스토리. feature 브랜치에서 작업
+- **깨끗한 히스토리**: feature 브랜치에서 작업. merge 전략(merge commit/squash/rebase)은 프로젝트가 선택
 - **코드 리뷰 필수**: merge 전 `/review` 스킬 사용 (교차 검증은 `cross-review`)
