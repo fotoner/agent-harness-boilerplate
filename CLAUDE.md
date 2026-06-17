@@ -27,8 +27,8 @@
 ### 브랜치 전략
 - `main`에 직접 커밋 금지. 모든 작업은 feature 브랜치에서 수행
 - 관련 이슈를 논리적 단위로 묶어 1개 브랜치로 작업
-- **squash merge 전 코드 리뷰 필수** (`/review`)
-- 완료 후 squash and merge로 main에 통합
+- **merge 전 코드 리뷰 필수** (`/review`)
+- 완료 후 main에 통합 (merge 전략은 프로젝트가 선택)
 - 상세: `docs/CONVENTIONS.md`
 
 ### 코딩
