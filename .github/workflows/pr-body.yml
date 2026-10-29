@@ -1,0 +1,22 @@
+name: pr-body
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions: {}
+
+jobs:
+  headings:
+    runs-on: ubuntu-latest
+    steps:
+      - name: PR 본문 필수 헤딩
+        env:
+          BODY: ${{ github.event.pull_request.body }}
+        run: |
+          body=$(printf '%s\n' "$BODY" | tr -d '\r')
+          missing=0
+          for h in "## 무엇을 바꿨나" "## 확인한 것" "## 위험 경로를 건드렸나" "## 관련 이슈"; do
+            printf '%s\n' "$body" | grep -qxF "$h" || { echo "::error::PR 본문에 '$h' 헤딩이 없다(.github/pull_request_template.md)"; missing=1; }
+          done
+          exit "$missing"

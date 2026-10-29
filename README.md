@@ -1,84 +1,38 @@
 # agent-harness-boilerplate
 
-AI 에이전트와 협업하기 위한 프로젝트 하네스 보일러플레이트. 새 프로젝트를 시작할 때 이 레포를 복제하고 `/init-project` 스킬로 초기화한다.
+에이전트와 함께 운영하는 저장소의 시작 틀. 할 일은 GitHub 이슈, 작업은 PR, 지침은 AGENTS.md 하나다.
 
-## 빠른 시작
+## 시작
 
 ```bash
-# 1. 레포 복제
-git clone --depth 1 https://github.com/fotoner/agent-harness-boilerplate my-new-project
-cd my-new-project
-rm -rf .git && git init
-
-# 2. Claude Code에서 초기화
-/init-project
-# 또는
-/init-project "path/to/project-plan.md"
+git clone --depth 1 https://github.com/fotoner/agent-harness-boilerplate my-project
+cd my-project && rm -rf .git && git init
 ```
 
-## 구조
+1. `AGENTS.md`, `CONTRIBUTING.md`, `docs/`, `.github/ISSUE_TEMPLATE/config.yml`의 `{{…}}`를 채운다.
+2. `scripts/check.sh` 위쪽의 명령(린트·타입·시험·빌드)을 채우고, `.github/workflows/check.yml`의 브랜치 이름을 기본 브랜치에 맞춘다.
+3. GitHub 저장소를 만든 뒤 `scripts/labels.sh <영역…>`으로 라벨을 만든다.
 
-```
-CLAUDE.md                          # 에이전트 진입점
-.agents/skills/                    # 스킬 정본 (canonical) — 수정은 항상 여기서
-├── init-project/                  # 하네스 초기화 (/init-project)
-├── manage-cycle/                  # 스프린트/이슈 관리 (/manage-cycle)
-├── commit/  pr/                   # 커밋·PR 게이트 (초안 승인)
-├── cross-review/                  # 두 모델 교차 리뷰 + 반영 게이트
-├── handoff/                       # 세션 핸드오프 메타프롬프트
-├── work-log/  work-log-daily/     # 세션 작업일지 + 일별 종합
-└── session-retrospective/         # 세션 회고 + 규칙 승격 (점진적 하네스 엔진)
-.claude/
-├── settings.json                  # Stop/StopFailure 훅 등록 + PostToolUse 스텁
-├── hooks/worklog_capture.py       # work-log 자동 캡처 + nudge
-└── skills/                        # .agents/skills/* 로의 symlink (노출본)
-docs/
-├── ARCHITECTURE.md REQUIREMENTS.md QUALITY_RULES.md CONVENTIONS.md
-├── CODE_REVIEW.md RELIABILITY.md SECURITY.md DECISIONS.md
-├── cycle/                         # 스프린트/이슈 (backlog, current-sprint, sprints/)
-├── designs/                       # specs/ + plans/
-├── work-log/                      # 세션 작업일지 (YYYY/MM/) + daily/ + raw/
-└── mistake/                       # 회고·실수 인덱스 (INDEX.md, README.md)
-```
+[fstack](https://github.com/fotoner/fstack)이 있으면 `harness` 스킬이 1·2를 채운다.
 
-> 스킬 정본은 `.agents/skills/`, `.claude/skills/` 는 symlink 노출본이다. 스킬을 고칠 땐 항상 `.agents/` 쪽을 수정한다.
+## 들어 있는 것
 
-## 하네스 문서
+| 파일 | 하는 일 |
+|---|---|
+| `AGENTS.md` | 정본 지침: 안전 불변식, 명령, 검증, 지도, 구조, 작업 규칙. 12KiB 목표, 16KiB 한도 |
+| `CLAUDE.md` | `@AGENTS.md`와 Claude Code 전용 두 줄 |
+| `CONTRIBUTING.md` | 기여 절차 |
+| `docs/issues.md` | 이슈 제목·라벨·본문·조사 근거 표기·흐름 |
+| `docs/architecture.md` | 의존 방향, 모듈, 쓰기 관문 |
+| `.github/ISSUE_TEMPLATE/` | 기능·버그·조사·상위 이슈 템플릿. 빈 이슈는 막는다 |
+| `.github/pull_request_template.md` | 무엇을 바꿨나 · 확인한 것 · 위험 경로 · 관련 이슈 |
+| `.github/workflows/check.yml` | PR은 `check.sh --changed`, 기본 브랜치는 전체 검사 |
+| `.github/workflows/pr-body.yml` | PR 본문의 필수 헤딩 검사 |
+| `scripts/check.sh` | 검사 사다리 `--quick` / `--changed` / 전체 |
+| `scripts/check-docs.py` | AGENTS.md 크기, 문서 링크, 남은 자리표시자 |
+| `scripts/labels.sh` | 종류·우선순위·`needs:`·영역 라벨 |
 
-| 문서 | 불변/가변 | 설명 |
-|------|----------|------|
-| QUALITY_RULES.md | 불변 | TDD, progressive harness, 코딩/테스트 규칙 |
-| CONVENTIONS.md | 대부분 불변 | 브랜치 전략, 커밋 형식, EARS 패턴 |
-| CODE_REVIEW.md | 대부분 불변 | 리뷰 필수 원칙, 심각도 분류 |
-| ARCHITECTURE.md | 대부분 가변 | 아키텍처 패턴 (init-project이 리서치 후 결정) |
-| REQUIREMENTS.md | 반반 | EARS 참조(불변) + 도메인 분해(가변) |
-| RELIABILITY.md | 반반 | 공통 정책(불변) + 프로젝트 특화(가변) |
-| SECURITY.md | 반반 | 공통 원칙(불변) + 환경 변수(가변) |
-| DECISIONS.md | 가변 | ADR — 기술적 결정과 근거 기록 |
-
-## 스킬
-
-### /init-project
-프로젝트 플랜을 받아서 `{{PLACEHOLDER}}`를 자동 치환. 대화형 또는 파일 기반.
-
-### /manage-cycle
-`docs/cycle/` 마크다운 파일 기반 스프린트 관리. 8개 커맨드: create-issue, create-sprint, status, update, backlog, plan-sprint, retrospective, next-sprint.
-
-### 게이트·세션 스킬
-
-- **/commit** · **/pr** — 커밋·PR 생성 게이트. 메시지 초안을 사용자에게 검수받고, 금지 패턴을 grep 검증한 뒤에만 실행. 직접 `git commit`/`gh pr create` 를 대체한다.
-- **/cross-review** — 서로 다른 두 모델의 독립 리뷰를 교차 실행하고 P1/P2/상충으로 수렴, 반영 게이트까지.
-- **/handoff** — 세션 마무리 시 컨텍스트 저장 + "# 세션 핸드오프" 메타프롬프트 생성 + 클립보드 복사.
-- **/work-log** · **/work-log-daily** — 세션 작업일지(`docs/work-log/YYYY/MM/`)와 일별 종합. Stop 훅이 작성 누락을 nudge 한다.
-- **/session-retrospective** — 세션 실수를 회고해 규칙 승격을 제안하고 `docs/mistake/` 에 누적. 점진적 하네스의 기계적 엔진.
-
-## 원칙
-
-- **TDD 필수**: 실패하는 테스트 → 최소 구현 → 리팩토링
-- **점진적 하네스**: 실수 2회 반복 → 규칙 추가. 문서로 안 되면 린터로 승격
-- **깨끗한 히스토리**: feature 브랜치에서 작업. merge 전략(merge commit/squash/rebase)은 프로젝트가 선택
-- **코드 리뷰 필수**: merge 전 `cross-review` (fstack이 있으면 `sol-loop`)
-- **fstack과 함께**: [fstack](https://github.com/fotoner/fstack)이 설치돼 있으면 겹치는 스킬은 fstack 쪽을 쓰고, 이 저장소의 규칙은 그대로 적용한다(CLAUDE.md "fstack과 함께 쓸 때")
+커밋·PR·리뷰·QA·인계·교정 기록은 이 저장소가 아니라 에이전트 쪽 스킬(fstack)이 맡는다. 이 저장소는 그 스킬이 읽는 저장소 쪽 규칙을 준다.
 
 ## 라이선스
 
