@@ -27,7 +27,7 @@
 ### 브랜치 전략
 - `main`에 직접 커밋 금지. 모든 작업은 feature 브랜치에서 수행
 - 관련 이슈를 논리적 단위로 묶어 1개 브랜치로 작업
-- **merge 전 코드 리뷰 필수** (`/review`)
+- **merge 전 코드 리뷰 필수** (`cross-review`, fstack이 있으면 `sol-loop`)
 - 완료 후 main에 통합 (merge 전략은 프로젝트가 선택)
 - 상세: `docs/CONVENTIONS.md`
 
@@ -48,6 +48,7 @@
 ### 커밋·PR 게이트
 커밋과 PR 은 `commit` / `pr` 스킬 절차로만 수행한다. 에이전트가 자체 판단으로 `git commit` / `gh pr create` 를 직접 실행하지 않으며, 두 스킬의 **초안 승인 게이트**를 생략하지 않는다. 도구 실행 승인(권한 모드 / approval policy)은 초안 콘텐츠 승인을 대체하지 않는다.
 - **예외**: 사용자가 승인한 플랜에 **커밋 단위와 메시지 형식**이 함께 명시된 경우, 그 플랜 실행 중의 task 커밋은 게이트를 충족한 것으로 본다 — 단 커밋 후 금지 패턴 grep 검증(아래)을 수행한다.
+- **예외**: 사용자가 fstack의 `full-send`·`full-stop`("full send"·"full stop")이나 "커밋하고 쭉 진행"처럼 커밋·PR 단계를 통째로 맡기면, 그 호출이 초안 승인을 대신한다. 금지 패턴 grep 검증은 그대로 한다.
 
 ### Subagent 결과 검증
 큰 task 를 implementer subagent 에 dispatch 할 때, prompt 에 규칙을 적는 것만으로 충분하지 않다. subagent 작업이 끝나면 dispatcher 가 결과물을 직접 검증한다 — 변경된 commit subject/body/파일명/코드/주석에서 프로젝트 금지 패턴(`docs/QUALITY_RULES.md`)이 잔존하는지 grep 한다. 활성 제약은 매 subagent prompt 에 다시 포함한다.
@@ -90,36 +91,22 @@
 
 {{DIRECTORY_STRUCTURE}}
 
-## Skill routing
+## 스킬
 
-사용자 요청이 가용 스킬과 매칭되면, 항상 Skill 도구로 먼저 호출한다.
-직접 답변하지 말고, 다른 도구를 먼저 쓰지 않는다.
-
-주요 라우팅 규칙:
-- 제품 아이디어, "이거 만들 가치 있어?", 브레인스토밍 → office-hours
-- 버그, 에러, "왜 안 돼", 500 에러 → investigate
-- 배포·전체 릴리스 통합 → ship (단, 커밋/PR 생성은 아래 게이트 스킬 `commit`/`pr` 가 우선)
-- QA, 사이트 테스트, 버그 찾기 → qa
-- 코드 리뷰, diff 확인 → review
-- 배포 후 문서 업데이트 → document-release
-- 주간 회고 → retro
-- 디자인 시스템, 브랜드 → design-consultation
-- 시각적 검수, 디자인 폴리시 → design-review
-- 아키텍처 리뷰 → plan-eng-review
-- 진행 상황 저장, 체크포인트 → checkpoint
-- 코드 품질, 헬스 체크 → health
-
-### 게이트·세션 스킬 (이 레포 정본)
-
-아래 스킬은 이 하네스가 직접 제공하며, 커밋/PR 생성 등에서는 gstack `ship` 보다 **우선**한다 (초안 승인 게이트를 거치기 때문).
+이 하네스가 제공하는 스킬이다.
 
 - 커밋 → `commit` (초안 검수 게이트 — 직접 `git commit` 금지)
 - PR 생성 → `pr` (브랜치명·본문 검수 게이트 — 직접 `gh pr create` 금지)
-- 교차 리뷰 / "다른 모델한테도 리뷰시켜" → `cross-review`
+- 코드 리뷰·교차 리뷰 / "다른 모델한테도 리뷰시켜" → `cross-review`
 - 병렬 에이전트 스캔/감사 보고서를 정본화·저장하기 전 → `cross-review` 로 교차 검증
+- 이슈·스프린트 → `manage-cycle`
 - 세션 마무리 / "컨텍스트 저장하고 메타프롬프트" → `handoff`
 - 첫 메시지가 "# 세션 핸드오프"로 시작하면 → 그 안의 컨텍스트 복원 지시와 작업 순서를 그대로 실행
 - 세션 작업일지 → `work-log`, 하루 종합 → `work-log-daily`
 - 세션 회고 / "CLAUDE.md 보강할 것 있어?" → `session-retrospective`
+
+### fstack과 함께 쓸 때
+
+사용자 환경에 [fstack](https://github.com/fotoner/fstack)이 설치돼 있으면 겹치는 일은 fstack 스킬을 쓴다: 커밋·PR·머지 → `ship`, 코드 리뷰 → `sol-loop`, 다중 모델 검토 → `council`, 마무리·인계 → `wrap`, 교정 기록 → `lesson`. 이 저장소의 규칙(커밋·PR 게이트와 그 예외, 금지 패턴, 커밋 형식, 브랜치 전략)은 fstack 스킬을 쓸 때도 그대로 적용한다.
 
 > 스킬 정본은 `.agents/skills/`, `.claude/skills/` 의 동명 항목은 symlink 노출본이다. **스킬 수정은 항상 `.agents/` 쪽에서** 한다.

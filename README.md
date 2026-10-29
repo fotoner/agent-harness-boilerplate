@@ -6,8 +6,8 @@ AI 에이전트와 협업하기 위한 프로젝트 하네스 보일러플레이
 
 ```bash
 # 1. 레포 복제
-cp -r ~/dev/agent-harness-boilerplate ~/dev/my-new-project
-cd ~/dev/my-new-project
+git clone --depth 1 https://github.com/fotoner/agent-harness-boilerplate my-new-project
+cd my-new-project
 rm -rf .git && git init
 
 # 2. Claude Code에서 초기화
@@ -77,4 +77,9 @@ docs/
 - **TDD 필수**: 실패하는 테스트 → 최소 구현 → 리팩토링
 - **점진적 하네스**: 실수 2회 반복 → 규칙 추가. 문서로 안 되면 린터로 승격
 - **깨끗한 히스토리**: feature 브랜치에서 작업. merge 전략(merge commit/squash/rebase)은 프로젝트가 선택
-- **코드 리뷰 필수**: merge 전 `/review` 스킬 사용 (교차 검증은 `cross-review`)
+- **코드 리뷰 필수**: merge 전 `cross-review` (fstack이 있으면 `sol-loop`)
+- **fstack과 함께**: [fstack](https://github.com/fotoner/fstack)이 설치돼 있으면 겹치는 스킬은 fstack 쪽을 쓰고, 이 저장소의 규칙은 그대로 적용한다(CLAUDE.md "fstack과 함께 쓸 때")
+
+## 라이선스
+
+[MIT](LICENSE)

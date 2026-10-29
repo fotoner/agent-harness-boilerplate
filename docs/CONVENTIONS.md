@@ -139,9 +139,9 @@
 
 - [D{n}.{n}] 이슈 설명 1
 - [D{n}.{n}] 이슈 설명 2
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 ```
+
+AI attribution 줄(`Co-Authored-By`)을 넣을지는 프로젝트가 정해 이 절에 적는다.
 
 | type | 용도 |
 |------|------|
@@ -210,24 +210,13 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - merge 전 자기 검토용 PR 생성 **권장**
 - PR 없이 로컬 머지도 허용 (1인 프로젝트)
 
-## `/ship` 스킬 사용 가이드
+## main 통합
 
-> 이 레포의 **커밋·PR 생성 정본은 `commit` / `pr` 스킬**(초안 승인 게이트 — CLAUDE.md "커밋·PR 게이트")이다. `/ship`은 gstack 설치 시 버전 bump·CHANGELOG·머지까지 묶는 **전체 릴리스 통합** 대안 워크플로다. 커밋/PR 단계는 게이트 스킬을 거친다.
+**전제조건**: `cross-review`(fstack이 있으면 `sol-loop`)로 코드 리뷰 통과. Critical/Important 이슈 모두 수정.
 
-feature 브랜치 작업 완료 후 `/ship` 스킬을 사용하여 main에 통합한다.
+PR을 만들어(`pr` 스킬) GitHub에서 머지한다(전략은 프로젝트 선택).
 
-**전제조건**: `/review`로 코드 리뷰 통과 필수. Critical/Important 이슈 모두 수정.
-
-**`/ship`이 자동 수행하는 것**:
-1. base branch merge + 테스트 실행
-2. diff 리뷰 + VERSION bump + CHANGELOG 업데이트
-3. commit + push + PR 생성
-
-> 상세 워크플로우 (adversarial review, scope drift detection 등): gstack `/ship` SKILL.md 참조
-
-**PR 생성 후**: GitHub에서 머지 (전략은 프로젝트 선택).
-
-**로컬 merge 옵션** (1인 프로젝트, `/ship` 대신):
+**로컬 merge 옵션** (1인 프로젝트):
 ```bash
 git checkout main
 git pull

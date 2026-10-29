@@ -6,7 +6,7 @@
 
 1. **결정이 내려질 때마다** 새 ADR을 추가한다 (아키텍처, 기술 선택, 라이브러리, 패턴 등)
 2. 한 번 승인된 ADR은 **수정하지 않고**, 새 ADR로 대체한다 (이력 보존)
-3. `/office-hours` 디자인 문서나 `/plan-eng-review` 결과에서 결정이 나오면 여기에 요약을 남긴다
+3. 설계 문서(`docs/designs/specs/`)나 구현 계획 리뷰(`docs/designs/plans/`, `cross-review`)에서 결정이 나오면 여기에 요약을 남긴다
 
 ## 템플릿
 
@@ -24,7 +24,7 @@
 
 ## 결정 기록
 
-<!-- init-project 또는 /office-hours 결과로 채워짐. 아래는 예시:
+<!-- init-project 또는 설계 결정으로 채워짐. 아래는 예시:
 
 ## ADR-001: PostgreSQL 선택
 

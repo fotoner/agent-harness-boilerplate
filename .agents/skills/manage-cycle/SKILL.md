@@ -105,25 +105,21 @@ plan-sprint → (실행: 자동 규칙 적용) → retrospective → next-sprint
 
 **처리 방식**: `Edit` 도구로 `CLAUDE.md` 직접 편집.
 
-### 규칙 4: gstack 스킬 트리거 연동
+### 규칙 4: 설계·리뷰 연동
 
-gstack 스킬과 cycle 이슈를 연동한다. gstack이 생성한 아티팩트(디자인 문서, plan file)는 해당 스킬이 자체 관리하므로, cycle → gstack 방향의 단방향 트리거로 운영한다.
+설계와 구현 계획은 저장소 안 문서로 남기고, cycle 이슈는 그 문서를 가리킨다.
 
-**디자인 문서 위치**:
-- 로컬: `docs/designs/specs/`, `docs/designs/plans/`
-- gstack: `~/.gstack/projects/{slug}/` (gstack `/office-hours`가 자동 생성)
+**문서 위치**: `docs/designs/specs/`(무엇을, 왜), `docs/designs/plans/`(어떻게, 어떤 순서로)
 
-**gstack 스킬 트리거**:
+| 상황 | 할 일 | 시점 |
+|------|------|------|
+| 새 기능/설계가 필요한 이슈 생성 | `docs/designs/specs/`에 설계 문서를 쓰고 사용자 승인 | `create-issue`에서 복잡도 판단 시 |
+| 회고 Try 항목 → 새 작업 도출 | 같은 방식으로 설계 문서부터 | `next-sprint` Step 5에서 |
+| 복수 Task가 필요한 큰 작업 | `docs/designs/plans/`에 구현 계획, `cross-review`로 검토 | 설계 승인 후 |
+| 코드 리뷰 | `cross-review` (fstack이 있으면 `sol-loop`) | 브랜치 완료 전 |
+| 브랜치 완료/PR 생성 | `pr` (게이트) | 코드 리뷰 통과 후 |
 
-| 상황 | gstack 스킬 | 트리거 시점 |
-|------|-------------|------------|
-| 새 기능/설계가 필요한 이슈 생성 | `/office-hours` | `create-issue`에서 복잡도 판단 시 |
-| 회고 Try 항목 → 새 작업 도출 | `/office-hours` | `next-sprint` Step 5에서 |
-| 복수 Task가 필요한 큰 작업 | `/plan-eng-review` | `/office-hours` 디자인 승인 후 |
-| 코드 리뷰 | `/review` | 브랜치 완료 전 |
-| 브랜치 완료/PR 생성 | `pr` (게이트) · 전체 릴리스는 `/ship` | 코드 리뷰 통과 후 |
-
-> **흐름**: `/office-hours`(무엇을, 왜) → `/plan-eng-review`(어떻게, 어떤 순서로) → `create-issue`(이슈 등록)
+> **흐름**: 설계 문서(무엇을, 왜) → 구현 계획(어떻게, 어떤 순서로) → `create-issue`(이슈 등록)
 
 **처리 방식**: `Read` + `Edit` 도구로 `backlog.md` / `current-sprint.md` 편집.
 
@@ -141,9 +137,9 @@ gstack 스킬과 cycle 이슈를 연동한다. gstack이 생성한 아티팩트(
 **브랜치 네이밍**: `<type>/<short-description>`
 
 **완료 시점**: 브랜치 내 모든 이슈가 완료되면:
-1. `/review` 스킬로 코드 리뷰 수행
+1. `cross-review`(fstack이 있으면 `sol-loop`)로 코드 리뷰 수행
 2. Critical/Important 이슈 수정
-3. `pr` 스킬로 PR 생성 (초안 승인 게이트 — CLAUDE.md "커밋·PR 게이트"). 전체 릴리스 통합(버전 bump·CHANGELOG·머지)이 필요하면 gstack `/ship`.
+3. `pr` 스킬로 PR 생성 (초안 승인 게이트 — CLAUDE.md "커밋·PR 게이트").
 
 **통합 커밋 메시지 형식**:
 ```
@@ -151,8 +147,6 @@ gstack 스킬과 cycle 이슈를 연동한다. gstack이 생성한 아티팩트(
 
 - [D{n}.{n}] 이슈 설명 1
 - [D{n}.{n}] 이슈 설명 2
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 > **상세 규칙**: `docs/CONVENTIONS.md` > 브랜치 전략 참조
@@ -171,7 +165,7 @@ EARS 형식으로 `backlog.md`에 이슈를 추가한다.
 1. 제목이 EARS 형식(`[D{n}.{n}][패턴] 설명`)인지 확인
 2. **복잡도 판단**: 이슈가 단순 작업/버그인지, 새로운 기능/설계가 필요한 작업인지 판단
    - **단순 작업/버그**: 바로 Step 3으로 진행
-   - **새 기능/설계 필요**: `/office-hours` 스킬을 먼저 호출
+   - **새 기능/설계 필요**: `docs/designs/specs/`에 설계 문서를 먼저 쓴다(규칙 4)
 3. 이슈 ID 자동 할당 (이슈 ID 규칙 참조)
 4. `backlog.md`의 Issues 테이블에 행 추가:
    ```
@@ -248,7 +242,7 @@ EARS 형식으로 `backlog.md`에 이슈를 추가한다.
 **처리 절차**:
 
 #### Step 1: 스프린트 목적 및 목표 설정
-1. 구현 플랜(`docs/designs/plans/`)과 gstack 디자인 문서(`~/.gstack/projects/`)를 읽고, 이번 스프린트 범위 파악
+1. 설계 문서(`docs/designs/specs/`)와 구현 플랜(`docs/designs/plans/`)을 읽고, 이번 스프린트 범위 파악
 2. 이전 스프린트 아카이브(`sprints/`)에서 최근 회고의 Try 항목 확인
 3. 사용자와 함께 다음을 결정:
    - **스프린트 목적** (1문장)
@@ -275,19 +269,15 @@ EARS 형식으로 `backlog.md`에 이슈를 추가한다.
 
 **처리 절차**:
 
-#### Phase 0.5: 코드 헬스 체크 (gstack /health 연동)
+#### Phase 0.5: 코드 헬스 체크
 
-gstack `/health` 스킬을 호출하여 최신 코드 품질 점수를 수집한다.
+저장소의 검사 명령(타입 검사·린트·테스트, `CLAUDE.md`·`docs/CONVENTIONS.md`에 적힌 것)을 돌려 결과를 모은다.
 
-**$SLUG 계산**: `eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)"` 사용. gstack-slug 미설치 시 `basename $(git rev-parse --show-toplevel)` 폴백.
+1. 실패·경고를 카테고리별로 센다(무엇을 셌는지 함께 적는다).
+2. 실패가 남은 카테고리를 Phase 3의 Problem 섹션에 올린다.
+3. 반복되는 실패는 `docs/QUALITY_RULES.md`에 규칙 추가를 **제안**한다(사용자 확인 후 추가, progressive harness 원칙 유지).
 
-**처리 절차**:
-1. `/health` 스킬을 호출하여 최신 코드 품질 데이터 생성
-2. `~/.gstack/projects/$SLUG/health-history.jsonl`에서 최신 엔트리를 읽어서 composite score + 카테고리별 점수 추출
-3. 점수 < 7인 카테고리를 Phase 3의 Problem 섹션에 자동 표면화
-4. 점수 < 7인 카테고리에 대해 `docs/QUALITY_RULES.md`에 구체적 규칙 추가를 **제안** (사용자 확인 후 추가, progressive harness 원칙 유지)
-
-**파싱 실패 폴백**: JSONL 파일이 없거나 파싱 결과가 0건이면 "⚠ /health 점수를 수집하지 못했습니다. gstack /health를 먼저 실행하거나 출력 형식을 확인하세요." 경고를 표시하고 이 단계를 건너뜀.
+검사 명령이 없거나 실행에 실패하면 그 사실을 적고 이 단계를 건너뛴다.
 
 #### Phase 1: 스프린트 결과 수집
 1. `current-sprint.md`를 `Read`로 읽어서 목적, 성공 기준, Board 파싱
@@ -361,7 +351,7 @@ gstack `/health` 스킬을 호출하여 최신 코드 품질 점수를 수집한
 #### Step 5: 회고 Try → 새 작업 도출
 1. 회고 Try 항목 중 구체적 작업으로 전환할 수 있는 것이 있으면:
    - 단순 이슈: `create-issue` 호출
-   - 새 기능/설계: `/office-hours` → `/plan-eng-review` → `create-issue`
+   - 새 기능/설계: 설계 문서 → 구현 계획(`cross-review`) → `create-issue`
 
 #### Step 6: 다음 스프린트 계획
 1. `plan-sprint` 명령을 내부 호출

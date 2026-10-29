@@ -140,23 +140,6 @@ C) Clean Architecture
 - 치환 후 각 파일이 자연스럽게 읽히는지 확인
 - placeholder 주변의 HTML 주석 (<!-- 힌트 -->)도 함께 제거
 
-### Step 4.5: gstack routing 생성 (신규)
-
-gstack 설치 여부를 확인하고, 설치되어 있으면 CLAUDE.md에 skill routing rules를 추가한다.
-
-**처리 방식**:
-1. `ls ~/.claude/skills/gstack/VERSION 2>/dev/null` 으로 gstack 존재 확인
-2. **설치됨**: CLAUDE.md의 `## Skill routing` 섹션이 이미 존재하는지 확인. 없으면 파일 하단에 추가
-3. **미설치**: CLAUDE.md 하단에 주석 삽입: `<!-- gstack 설치 후 /init-project를 다시 실행하면 skill routing이 추가됩니다 -->`
-
-### Step 4.6: Migration audit (신규)
-
-모든 하네스 문서에서 이전 스킬 팩 참조가 남아있지 않은지 확인한다.
-
-`Grep` 도구로 CLAUDE.md, docs/, .claude/skills/, README.md 범위에서 이전 스킬 팩 이름을 검색한다.
-
-Expected: 0 matches. 잔존 참조가 있으면 사용자에게 목록을 표시하고 수정을 안내한다.
-
 ### Step 5: 초기 커밋
 
 치환된 파일만 명시적으로 staging한다 (`git add -A` 사용 금지):
@@ -197,5 +180,5 @@ Expected: 0 matches (모든 placeholder가 치환됨)
 ## 주의사항
 
 - **불변 규칙은 수정하지 않는다**: QUALITY_RULES.md, CONVENTIONS.md의 TDD/브랜치/progressive harness 규칙은 placeholder가 없으므로 그대로 유지
-- **brainstorming을 트리거하지 않는다**: 이 스킬은 이미 프로젝트 플랜이 있는 상태에서 호출되므로, 설계 단계를 건너뜀
+- **설계 단계를 다시 하지 않는다**: 이 스킬은 이미 프로젝트 플랜이 있는 상태에서 호출되므로, 설계 단계를 건너뜀
 - **HTML 주석 정리**: placeholder 치환 시 주변의 `<!-- 스택별 힌트: ... -->` 주석도 프로젝트에 맞게 수정하거나 제거
